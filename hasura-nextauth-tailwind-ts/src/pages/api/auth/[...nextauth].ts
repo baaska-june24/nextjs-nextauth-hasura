@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
 
 import EmailProvider from 'next-auth/providers/email';
 
@@ -8,7 +8,7 @@ import { JWT } from 'next-auth/jwt';
 
 const jwtSecret: { type: string; key: string } = JSON.parse(process.env.NEXT_PUBLIC_JWT_SECRET);
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: HasuraAdapter(),
   providers: [
     EmailProvider({
@@ -76,4 +76,5 @@ export default NextAuth({
     },
   },
   debug: true,
-});
+};
+export default NextAuth(authOptions);

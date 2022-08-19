@@ -8,10 +8,10 @@ import { useApollo } from '~/lib/apolloClient';
 import { ApolloProvider } from '@apollo/client';
 
 const MyApp = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
-  const apolloClient = useApollo(pageProps);
+  const apolloClient = useApollo(pageProps, session?.token);
   return (
-    <ApolloProvider client={apolloClient}>
-      <SessionProvider session={session} refetchInterval={0}>
+    <SessionProvider session={session} refetchInterval={0}>
+      <ApolloProvider client={apolloClient}>
         <Layout>
           {Component.isAuth ? (
             <Auth requiredRoles={Component.requiredRoles}>
@@ -21,8 +21,8 @@ const MyApp = ({ Component, pageProps: { session, ...pageProps } }: AppProps) =>
             <Component {...pageProps} />
           )}
         </Layout>
-      </SessionProvider>
-    </ApolloProvider>
+      </ApolloProvider>
+    </SessionProvider>
   );
 };
 

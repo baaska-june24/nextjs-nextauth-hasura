@@ -42,7 +42,7 @@ import { initializeApollo } from './apolloClient';
 import { Account } from 'next-auth';
 
 export const HasuraAdapter = (): Adapter => {
-  const client = initializeApollo();
+  const client = initializeApollo({});
   const context = {
     headers: {
       'x-hasura-admin-secret': process.env.NEXT_PUBLIC_GRAPHQL_SECRET,

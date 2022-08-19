@@ -1,10 +1,10 @@
+import { AppProps } from 'next/app';
 import { useMemo } from 'react';
 import { ApolloClient, HttpLink, InMemoryCache, from, split, NormalizedCacheObject } from '@apollo/client';
 import { onError } from '@apollo/client/link/error';
 import { concatPagination, getMainDefinition } from '@apollo/client/utilities';
 import merge from 'deepmerge';
 import isEqual from 'lodash/isEqual';
-import { getSession } from 'next-auth/react';
 import fetch from 'isomorphic-unfetch';
 import { setContext } from '@apollo/client/link/context';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
@@ -16,6 +16,13 @@ const SUBSCRIPTION_ENDPOINT = GRAPHQL_ENDPOINT.replace('http', 'ws');
 
 let apolloClient: ApolloClient<NormalizedCacheObject>;
 
+const getHeader = (accessToken: string) => {
+  if (accessToken)
+    return {
+      authorization: `Bearer ${accessToken ?? ''}`,
+    };
+};
+
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) graphQLErrors.forEach(({ message, locations, path }) => console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`));
   if (networkError) console.log(`[Network error]: ${networkError}`);
@@ -23,48 +30,33 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 
 // set query context header and default headers
 const authLink = setContext((_, { headers }) => {
-  let token = null;
-  async () => {
-    const session = await getSession();
-    if (session?.token) {
-      token = session.token;
-    }
-  };
-  // return the headers to the context so httpLink can read them
   return {
-    headers: token
-      ? {
-          ...headers,
-          authorization: `Bearer ${token}`,
-        }
-      : headers
-      ? {
-          ...headers,
-        }
-      : {
-          'x-hasura-role': 'anonymous',
-        },
+    headers,
   };
 });
 
-const createHttpLink = () => {
+const createHttpLink = (headers) => {
   const httpLink = new HttpLink({
     uri: GRAPHQL_ENDPOINT,
     credentials: 'include',
+    headers,
     fetch,
   });
   return httpLink;
 };
 
-const createWSLink = () => {
+const createWSLink = (headers) => {
   return new GraphQLWsLink(
     createClient({
       url: SUBSCRIPTION_ENDPOINT,
+      connectionParams: async () => {
+        return headers;
+      },
     })
   );
 };
 
-function createApolloClient() {
+function createApolloClient(headers) {
   const ssrMode = typeof window === 'undefined';
   const link = !ssrMode
     ? split(
@@ -74,10 +66,10 @@ function createApolloClient() {
           const definition = getMainDefinition(query);
           return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
         },
-        createWSLink(),
-        createHttpLink()
+        createWSLink(headers),
+        createHttpLink(headers)
       )
-    : createHttpLink();
+    : createHttpLink(headers);
 
   return new ApolloClient({
     ssrMode: ssrMode,
@@ -94,8 +86,8 @@ function createApolloClient() {
   });
 }
 
-export const initializeApollo = (initialState = null): ApolloClient<NormalizedCacheObject> => {
-  const _apolloClient = apolloClient ?? createApolloClient();
+export const initializeApollo = ({ initialState = null, accessToken = null }): ApolloClient<NormalizedCacheObject> => {
+  const _apolloClient = apolloClient ?? createApolloClient(getHeader(accessToken));
 
   // If your page has Next.js data fetching methods that use Apollo Client, the initial state
   // gets hydrated here
@@ -127,8 +119,8 @@ export const addApolloState = (client, pageProps) => {
   return pageProps;
 };
 
-export const useApollo = (pageProps) => {
+export const useApollo = (pageProps: AppProps['pageProps'], accessToken?: string) => {
   const state = pageProps[APOLLO_STATE_PROP_NAME];
-  const store = useMemo(() => initializeApollo(state), [state]);
+  const store = useMemo(() => initializeApollo({ initialState: state, accessToken }), [state]);
   return store;
 };

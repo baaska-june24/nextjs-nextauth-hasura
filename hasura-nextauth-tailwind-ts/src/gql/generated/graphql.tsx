@@ -2722,6 +2722,13 @@ export type Get_User_RolesQueryVariables = Exact<{
 
 export type Get_User_RolesQuery = { __typename?: 'query_root', user_roles: Array<{ __typename?: 'user_roles', id: number, role_name: string, role_priority: number }> };
 
+export type Get_User_ProfileQueryVariables = Exact<{
+  where?: InputMaybe<User_Profile_Bool_Exp>;
+}>;
+
+
+export type Get_User_ProfileQuery = { __typename?: 'query_root', user_profile: Array<{ __typename?: 'user_profile', id: number, firstname?: string | null, lastname?: string | null, mobile_number?: any | null }> };
+
 export const Role_FreagmentFragmentDoc = gql`
     fragment role_freagment on user_roles {
   key: id
@@ -3230,3 +3237,41 @@ export function useGet_User_RolesLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type Get_User_RolesQueryHookResult = ReturnType<typeof useGet_User_RolesQuery>;
 export type Get_User_RolesLazyQueryHookResult = ReturnType<typeof useGet_User_RolesLazyQuery>;
 export type Get_User_RolesQueryResult = Apollo.QueryResult<Get_User_RolesQuery, Get_User_RolesQueryVariables>;
+export const Get_User_ProfileDocument = gql`
+    query GET_USER_PROFILE($where: user_profile_bool_exp) {
+  user_profile(where: $where) {
+    id
+    firstname
+    lastname
+    mobile_number
+  }
+}
+    `;
+
+/**
+ * __useGet_User_ProfileQuery__
+ *
+ * To run a query within a React component, call `useGet_User_ProfileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGet_User_ProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGet_User_ProfileQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *   },
+ * });
+ */
+export function useGet_User_ProfileQuery(baseOptions?: Apollo.QueryHookOptions<Get_User_ProfileQuery, Get_User_ProfileQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<Get_User_ProfileQuery, Get_User_ProfileQueryVariables>(Get_User_ProfileDocument, options);
+      }
+export function useGet_User_ProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Get_User_ProfileQuery, Get_User_ProfileQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<Get_User_ProfileQuery, Get_User_ProfileQueryVariables>(Get_User_ProfileDocument, options);
+        }
+export type Get_User_ProfileQueryHookResult = ReturnType<typeof useGet_User_ProfileQuery>;
+export type Get_User_ProfileLazyQueryHookResult = ReturnType<typeof useGet_User_ProfileLazyQuery>;
+export type Get_User_ProfileQueryResult = Apollo.QueryResult<Get_User_ProfileQuery, Get_User_ProfileQueryVariables>;

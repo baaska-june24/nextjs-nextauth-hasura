@@ -32,3 +32,14 @@ export const GET_USER_ROLES = gql`
     }
   }
 `;
+
+export const GET_USER_PROFILE = gql`
+  query GET_USER_PROFILE($where: user_profile_bool_exp) {
+    user_profile(where: $where) {
+      id
+      firstname
+      lastname
+      mobile_number
+    }
+  }
+`;
