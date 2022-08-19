@@ -1,0 +1,55 @@
+version: '3.6'
+services:
+  #-----------------------POSTGRE DATABASES---------------------
+  hasura_metadata_postgres:
+    image: postgres:12
+    ports:
+      - '6000:5432'
+    restart: always
+    volumes:
+      - hasura_meta_data:/var/lib/postgresql/data
+    environment:
+      TZ: Asia/Ulaanbaatar
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: hasura_metadata_db
+
+  main_data_postgres:
+    image: postgres:12
+    ports:
+      - '6001:5432'
+    restart: always
+    volumes:
+      - main_db:/var/lib/postgresql/data
+    environment:
+      TZ: Asia/Ulaanbaatar
+      POSTGRES_USER: main_data_db_user
+      POSTGRES_PASSWORD: main_data_db_password
+      POSTGRES_DB: main_data
+
+  #-----------------------HASURA---------------------
+
+  graphql-gateway:
+    image: hasura/graphql-engine:v2.10.0
+    ports:
+      - '8000:8080'
+    depends_on:
+      - 'hasura_metadata_postgres'
+      - 'main_data_postgres'
+   
+
+    restart: always
+    environment:
+      HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://user:password@hasura_metadata_postgres:5432/hasura_metadata_db
+      HASURA_GRAPHQL_DATABASE_URL: postgres://main_data_db_user:main_data_db_password@main_data_postgres:5432/main_data
+      HASURA_GRAPHQL_ENABLE_CONSOLE: 'true' # set to "false" to disable console
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      HASURA_GRAPHQL_ADMIN_SECRET: adminsecret
+      HASURA_GRAPHQL_UNAUTHORIZED_ROLE: anonymous
+      HASURA_GRAPHQL_JWT_SECRET: '{ "type": "HS256", "key": "3bd561c37d214b4496d09049fadc542c" }'
+
+
+volumes:
+  hasura_meta_data:
+  main_db:
+

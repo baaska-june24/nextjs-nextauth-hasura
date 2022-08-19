@@ -1,0 +1,41 @@
+table:
+  name: users
+  schema: user
+object_relationships:
+  - name: profile
+    using:
+      manual_configuration:
+        column_mapping:
+          id: userId
+        insertion_order: null
+        remote_table:
+          name: profile
+          schema: user
+array_relationships:
+  - name: accounts
+    using:
+      manual_configuration:
+        column_mapping:
+          id: userId
+        insertion_order: null
+        remote_table:
+          name: accounts
+          schema: user
+  - name: roles
+    using:
+      manual_configuration:
+        column_mapping:
+          id: userId
+        insertion_order: null
+        remote_table:
+          name: map_user_roles
+          schema: user
+  - name: sessions
+    using:
+      manual_configuration:
+        column_mapping:
+          id: userId
+        insertion_order: null
+        remote_table:
+          name: sessions
+          schema: user

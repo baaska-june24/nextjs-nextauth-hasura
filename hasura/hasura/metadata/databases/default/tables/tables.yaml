@@ -1,0 +1,7 @@
+- "!include user_accounts.yaml"
+- "!include user_map_user_roles.yaml"
+- "!include user_profile.yaml"
+- "!include user_roles.yaml"
+- "!include user_sessions.yaml"
+- "!include user_users.yaml"
+- "!include user_verification_tokens.yaml"

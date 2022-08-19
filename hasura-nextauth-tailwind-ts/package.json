@@ -1,0 +1,48 @@
+{
+  "name": "ts-next-auth-and-hasura-template",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc",
+    "codegen": "cross-env DOTENV_CONFIG_PATH=./.env.local graphql-codegen --config codegen.js -r dotenv/config"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.6.9",
+    "@apollo/react-hooks": "^4.0.0",
+    "cross-env": "^7.0.3",
+    "deepmerge": "^4.2.2",
+    "graphql": "^16.6.0",
+    "graphql-ws": "^5.10.0",
+    "isomorphic-unfetch": "^3.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "next": "^12.2.5",
+    "next-auth": "^4.10.3",
+    "next-i18next": "^11.3.0",
+    "nodemailer": "^6.7.8",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^2.11.6",
+    "@graphql-codegen/introspection": "^2.2.1",
+    "@graphql-codegen/typescript": "^2.7.3",
+    "@graphql-codegen/typescript-graphql-files-modules": "^2.2.1",
+    "@graphql-codegen/typescript-operations": "^2.5.3",
+    "@graphql-codegen/typescript-react-apollo": "^3.3.3",
+    "@types/node": "^18.7.5",
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
+    "autoprefixer": "^10.4.8",
+    "eslint": "^8.22.0",
+    "postcss": "^8.4.16",
+    "prettier": "^2.7.1",
+    "prettier-plugin-tailwindcss": "^0.1.13",
+    "tailwindcss": "^3.1.8",
+    "typescript": "^4.7.4"
+  }
+}
